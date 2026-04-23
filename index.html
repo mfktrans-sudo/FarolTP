@@ -807,10 +807,14 @@
                 <div>
                     <h1>🏭 <span>FAROL</span> DE OPERAÇÃO</h1>
                     <div class="header-subtitle">Sistema de Monitoramento Logístico · Tempo Real</div>
+                    <div id="bannerConfig" style="display:none; margin-top:8px; padding:8px 14px; background:#ff9800; color:#000; border-radius:6px; font-size:0.8em; font-weight:600;">
+                        ⚠️ Firebase não configurado! Edite o arquivo e cole suas credenciais do Firebase em <code>firebaseConfig</code>. Rodando em modo local (dados não compartilhados).
+                    </div>
                 </div>
             </div>
             <div class="header-actions">
                 <div class="live-clock" id="liveClock">--:--:--</div>
+                <span id="firebaseStatus" style="font-size:0.8em; font-weight:600; padding: 4px 10px; background: rgba(0,0,0,0.2); border-radius:6px;">🟡 Conectando Firebase...</span>
                 <button class="btn btn-success" onclick="exportarDados()">⬇ Exportar CSV</button>
                 <button class="btn btn-danger" onclick="limparBancoDados()">✕ Limpar Tudo</button>
             </div>
@@ -1115,24 +1119,106 @@
         let charts = {};
         let ultimaDiaVerificada = null;
 
-        // CARREGAR DADOS DO LOCALSTORAGE
-        function carregarDados() {
+        // =============================================
+        // FIREBASE CONFIGURATION
+        // =============================================
+        // Substitua os valores abaixo com as credenciais do SEU projeto Firebase
+        // Acesse: Firebase Console > Configurações do Projeto > Seus apps > SDK
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDqJZ57h476kftoTxg7My5ewC-Vw5gTjY",
+            authDomain: "farol-678a9.firebaseapp.com",
+            projectId: "farol-678a9",
+            storageBucket: "farol-678a9.firebasestorage.app",
+            messagingSenderId: "646231229197",
+            appId: "1:646231229197:web:2d83f9d9965fc1fba32644"
+        };
+
+        // Importar Firebase via CDN
+        let db = null;
+        let firestoreModule = null;
+        let unsubscribeListener = null;
+
+        async function initFirebase() {
+            try {
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
+                const firestore = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                firestoreModule = firestore;
+
+                const app = initializeApp(firebaseConfig);
+                db = firestore.getFirestore(app);
+
+                console.log("✅ Firebase conectado!");
+                mostrarStatusFirebase(true);
+
+                // Escutar mudanças em tempo real
+                escutarOperacoes();
+
+            } catch (err) {
+                console.error("❌ Erro ao conectar Firebase:", err);
+                mostrarStatusFirebase(false);
+                // Fallback para localStorage se Firebase falhar
+                carregarDadosLocal();
+            }
+        }
+
+        function mostrarStatusFirebase(conectado) {
+            const indicator = document.getElementById('firebaseStatus');
+            const banner = document.getElementById('bannerConfig');
+            if (indicator) {
+                indicator.textContent = conectado ? '🟢 Firebase conectado' : '🔴 Offline (modo local)';
+                indicator.style.color = conectado ? '#4CAF50' : '#f44336';
+            }
+            if (banner) {
+                banner.style.display = conectado ? 'none' : 'block';
+            }
+        }
+
+        // Escutar operações em tempo real (todos os usuários veem as mudanças)
+        function escutarOperacoes() {
+            if (!db || !firestoreModule) return;
+            const { collection, onSnapshot, query, orderBy } = firestoreModule;
+
+            const q = query(collection(db, 'operacoes'), orderBy('id', 'asc'));
+            unsubscribeListener = onSnapshot(q, (snapshot) => {
+                operacoes = [];
+                snapshot.forEach(doc => {
+                    operacoes.push({ ...doc.data(), _docId: doc.id });
+                });
+
+                // Atualizar próximo ID
+                if (operacoes.length > 0) {
+                    proximoId = Math.max(...operacoes.map(o => o.id)) + 1;
+                }
+
+                verificarMudancaDia();
+                atualizarDashboard();
+                carregarOperacoes();
+                aplicarFiltros();
+                if (typeof aplicarFiltrosBanco === 'function') aplicarFiltrosBanco();
+                atualizarGraficos();
+                if (typeof carregarRelatorioTempos === 'function') carregarRelatorioTempos();
+            }, (error) => {
+                console.error("Erro ao escutar Firestore:", error);
+            });
+        }
+
+        // CARREGAR DADOS DO LOCALSTORAGE (fallback offline)
+        function carregarDadosLocal() {
             const dados = localStorage.getItem('operacoes_farol_v2');
             const idSalvo = localStorage.getItem('proximoId_farol_v2');
             const ultimoDia = localStorage.getItem('ultimo_dia_verificado');
 
-            if (dados) {
-                operacoes = JSON.parse(dados);
-            }
-            if (idSalvo) {
-                proximoId = parseInt(idSalvo);
-            }
-            if (ultimoDia) {
-                ultimaDiaVerificada = ultimoDia;
-            }
+            if (dados) operacoes = JSON.parse(dados);
+            if (idSalvo) proximoId = parseInt(idSalvo);
+            if (ultimoDia) ultimaDiaVerificada = ultimoDia;
 
-            // Verificar se mudou o dia e limpar operações em andamento
             verificarMudancaDia();
+        }
+
+        function carregarDados() {
+            // Firebase é inicializado separadamente via initFirebase()
+            // Esta função serve como fallback
+            carregarDadosLocal();
         }
 
         // VERIFICAR MUDANÇA DE DIA E LIMPAR OPERAÇÕES EM ANDAMENTO
@@ -1178,9 +1264,7 @@
         setInterval(verificarMudancaDia, 60000);
 
         // INICIALIZAÇÃO
-        document.addEventListener('DOMContentLoaded', function() {
-            carregarDados();
-            
+        document.addEventListener('DOMContentLoaded', async function() {
             const hoje = new Date().toISOString().split('T')[0];
             const agora = new Date();
             const horaAtual = String(agora.getHours()).padStart(2, '0') + ':' + 
@@ -1194,12 +1278,10 @@
             document.getElementById('novaHoraInicio').addEventListener('change', calcularMetaAutomatica);
             document.getElementById('novaHoraMeta').addEventListener('change', calcularMetaAutomatica);
 
-            atualizarDashboard();
-            carregarOperacoes();
             inicializarGraficos();
-            aplicarFiltros();
-            aplicarFiltrosBanco();
-            carregarRelatorioTempos();
+
+            // Inicializa Firebase (se configurado), senão usa localStorage
+            await initFirebase();
 
             setInterval(atualizarDashboard, 1000);
         });
@@ -1213,7 +1295,7 @@
         }
 
         // ADICIONAR NOVA OPERAÇÃO
-        function adicionarOperacao(event) {
+        async function adicionarOperacao(event) {
             event.preventDefault();
 
             const dataStr = document.getElementById('novaData').value;
@@ -1247,8 +1329,18 @@
                 status: 'em-andamento'
             };
 
-            operacoes.push(novaOp);
-            salvarDados();
+            if (db) {
+                await salvarOperacaoFirebase(novaOp);
+                // O listener onSnapshot vai atualizar a UI automaticamente
+            } else {
+                operacoes.push(novaOp);
+                salvarDados();
+                atualizarDashboard();
+                carregarOperacoes();
+                aplicarFiltros();
+                aplicarFiltrosBanco();
+                atualizarGraficos();
+            }
 
             alert('✅ Operação cadastrada com sucesso!\n' +
                   'Destino: ' + novaOp.destino + '\n' +
@@ -1256,11 +1348,6 @@
                   'Meta: ' + novaOp.meta + ' minutos');
             
             limparFormulario();
-            atualizarDashboard();
-            carregarOperacoes();
-            aplicarFiltros();
-            aplicarFiltrosBanco();
-            atualizarGraficos();
         }
 
         // CALCULAR META AUTOMATICAMENTE
@@ -1807,7 +1894,7 @@
             document.getElementById('modalEdicao').style.display = 'none';
         }
 
-        function salvarEdicao() {
+        async function salvarEdicao() {
             const id = parseInt(document.getElementById('editId').value);
             const op = operacoes.find(o => o.id === id);
             if (!op) return;
@@ -1856,13 +1943,19 @@
                 }
             }
 
-            salvarDados();
-            atualizarDashboard();
-            carregarOperacoes();
-            aplicarFiltros();
-            aplicarFiltrosBanco();
-            atualizarGraficos();
-            carregarRelatorioTempos();
+            if (db && op._docId) {
+                const { _docId, ...dadosSemDocId } = op;
+                await atualizarOperacaoFirebase(op._docId, dadosSemDocId);
+                // listener vai atualizar UI
+            } else {
+                salvarDados();
+                atualizarDashboard();
+                carregarOperacoes();
+                aplicarFiltros();
+                aplicarFiltrosBanco();
+                atualizarGraficos();
+                carregarRelatorioTempos();
+            }
             fecharModal();
             
             if (fimCarregamento && op.status !== 'em-andamento') {
@@ -1877,27 +1970,14 @@
         }
 
         // EXCLUIR OPERAÇÃO
-        function excluirOperacao(id) {
+        async function excluirOperacao(id) {
             if (confirm('⚠️ Deseja realmente excluir esta operação?')) {
-                operacoes = operacoes.filter(op => op.id !== id);
-                salvarDados();
-                atualizarDashboard();
-                carregarOperacoes();
-                aplicarFiltros();
-                aplicarFiltrosBanco();
-                atualizarGraficos();
-                carregarRelatorioTempos();
-                alert('✅ Operação excluída!');
-            }
-        }
-
-        // LIMPAR BANCO
-        function limparBancoDados() {
-            if (confirm('⚠️ ATENÇÃO! Isso apagará TODAS as operações. Deseja continuar?')) {
-                if (confirm('🚨 Última confirmação! Todos os dados serão perdidos!')) {
-                    operacoes = [];
-                    proximoId = 1;
-                    alertasSonoros = {};
+                const op = operacoes.find(o => o.id === id);
+                if (db && op && op._docId) {
+                    await excluirOperacaoFirebase(op._docId);
+                    // listener vai atualizar UI
+                } else {
+                    operacoes = operacoes.filter(op => op.id !== id);
                     salvarDados();
                     atualizarDashboard();
                     carregarOperacoes();
@@ -1905,6 +1985,30 @@
                     aplicarFiltrosBanco();
                     atualizarGraficos();
                     carregarRelatorioTempos();
+                }
+                alert('✅ Operação excluída!');
+            }
+        }
+
+        // LIMPAR BANCO
+        async function limparBancoDados() {
+            if (confirm('⚠️ ATENÇÃO! Isso apagará TODAS as operações. Deseja continuar?')) {
+                if (confirm('🚨 Última confirmação! Todos os dados serão perdidos!')) {
+                    alertasSonoros = {};
+                    if (db) {
+                        await limparFirebase();
+                        // listener vai atualizar UI e resetar proximoId
+                    } else {
+                        operacoes = [];
+                        proximoId = 1;
+                        salvarDados();
+                        atualizarDashboard();
+                        carregarOperacoes();
+                        aplicarFiltros();
+                        aplicarFiltrosBanco();
+                        atualizarGraficos();
+                        carregarRelatorioTempos();
+                    }
                     alert('✅ Banco de dados limpo!');
                 }
             }
@@ -1948,11 +2052,49 @@
             document.getElementById('metaCalculada').style.display = 'none';
         }
 
-        // SALVAR DADOS
+        // SALVAR DADOS (backup local + Firebase via listener)
         function salvarDados() {
             localStorage.setItem('operacoes_farol_v2', JSON.stringify(operacoes));
             localStorage.setItem('proximoId_farol_v2', proximoId.toString());
             localStorage.setItem('ultimo_dia_verificado', ultimaDiaVerificada);
+        }
+
+        // ADICIONAR operação no Firebase
+        async function salvarOperacaoFirebase(op) {
+            if (!db || !firestoreModule) return false;
+            const { collection, addDoc } = firestoreModule;
+            try {
+                await addDoc(collection(db, 'operacoes'), op);
+                return true;
+            } catch (err) {
+                console.error("Erro ao salvar:", err);
+                alert("⚠️ Erro ao salvar no Firebase. Verifique as configurações.");
+                return false;
+            }
+        }
+
+        // ATUALIZAR operação no Firebase
+        async function atualizarOperacaoFirebase(docId, dados) {
+            if (!db || !firestoreModule) return;
+            const { doc, updateDoc } = firestoreModule;
+            try { await updateDoc(doc(db, 'operacoes', docId), dados); }
+            catch (err) { console.error("Erro ao atualizar:", err); }
+        }
+
+        // EXCLUIR operação no Firebase
+        async function excluirOperacaoFirebase(docId) {
+            if (!db || !firestoreModule) return;
+            const { doc, deleteDoc } = firestoreModule;
+            try { await deleteDoc(doc(db, 'operacoes', docId)); }
+            catch (err) { console.error("Erro ao excluir:", err); }
+        }
+
+        // LIMPAR TUDO no Firebase
+        async function limparFirebase() {
+            if (!db || !firestoreModule) return;
+            const { collection, getDocs, doc, deleteDoc } = firestoreModule;
+            const snapshot = await getDocs(collection(db, 'operacoes'));
+            await Promise.all(snapshot.docs.map(d => deleteDoc(doc(db, 'operacoes', d.id))));
         }
 
         // Fechar modal ao clicar fora
