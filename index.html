@@ -687,9 +687,237 @@
             animation-delay: -1s;
             left: 30px;
         }
+        /* ─── LOGIN SCREEN ─── */
+        .login-screen {
+            display: none;
+            position: fixed; inset: 0; z-index: 99999;
+            background: radial-gradient(ellipse at 20% 50%, #0d1829 0%, #090e1a 60%, #0a1220 100%);
+            align-items: center; justify-content: center;
+            font-family: 'Exo 2', sans-serif;
+        }
+        .login-screen.visible { display: flex; }
+        .login-bg-animated {
+            position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+        }
+        .login-particle {
+            position: absolute; left: var(--x); top: var(--y);
+            font-size: 2.5em; opacity: 0.07;
+            animation: floatParticle 8s ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        @keyframes floatParticle {
+            0%,100% { transform: translateY(0) rotate(0deg); opacity: 0.07; }
+            50% { transform: translateY(-30px) rotate(10deg); opacity: 0.14; }
+        }
+        .login-card {
+            position: relative; z-index: 2;
+            background: rgba(18, 24, 42, 0.95);
+            border: 1px solid rgba(0,200,255,0.2);
+            border-radius: 20px;
+            padding: 48px 44px 40px;
+            width: 100%; max-width: 420px;
+            box-shadow: 0 0 80px rgba(0,200,255,0.08), 0 30px 60px rgba(0,0,0,0.6);
+            animation: loginSlideIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        @keyframes loginSlideIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .login-logo { text-align: center; margin-bottom: 16px; }
+        .login-title {
+            text-align: center; font-family: 'Rajdhani', sans-serif;
+            font-size: 2em; font-weight: 700; letter-spacing: 3px;
+            color: var(--text-main); margin: 0 0 6px;
+        }
+        .login-title span { color: var(--accent); }
+        .login-subtitle { text-align: center; color: var(--text-dim); font-size: 0.9em; margin: 0 0 24px; }
+        .login-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-glow), transparent); margin-bottom: 28px; }
+        .login-field { margin-bottom: 18px; }
+        .login-field label {
+            display: block; font-family: 'Rajdhani', sans-serif;
+            font-weight: 600; font-size: 0.82em; text-transform: uppercase;
+            letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px;
+        }
+        .login-field input {
+            width: 100%; padding: 13px 16px; box-sizing: border-box;
+            border: 1px solid var(--border); border-radius: 8px;
+            background: var(--bg-surface); color: var(--text-main);
+            font-size: 1em; font-family: 'Share Tech Mono', monospace;
+            transition: all 0.3s;
+        }
+        .login-field input:focus {
+            outline: none; border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0,200,255,0.12), 0 0 20px rgba(0,200,255,0.05);
+        }
+        .toggle-senha {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; font-size: 1.1em; opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .toggle-senha:hover { opacity: 1; }
+        .login-error {
+            color: var(--danger); font-size: 0.88em; min-height: 20px;
+            margin-bottom: 12px; text-align: center;
+            animation: shakeError 0.4s ease-in-out;
+        }
+        @keyframes shakeError {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .login-submit {
+            width: 100%; padding: 14px; justify-content: center; font-size: 1.05em;
+            letter-spacing: 2px; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #0088cc, #00c8ff);
+        }
+        .login-submit:hover { transform: none; box-shadow: 0 0 30px rgba(0,200,255,0.3); }
+        .login-submit::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            transform: translateX(-100%); transition: transform 0.6s;
+        }
+        .login-submit:hover::after { transform: translateX(100%); }
+        .login-spinner {
+            width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin-left: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .login-footer { text-align: center; margin-top: 24px; font-size: 0.8em; color: var(--text-dim); }
+        .login-user-badge {
+            display: none; align-items: center; gap: 10px;
+            padding: 6px 14px; background: rgba(0,200,255,0.06);
+            border: 1px solid rgba(0,200,255,0.15); border-radius: 20px;
+            font-size: 0.85em; color: var(--text-muted);
+        }
+        .login-user-badge.visible { display: flex; }
+        .logout-btn {
+            background: none; border: 1px solid rgba(255,61,87,0.3);
+            color: var(--danger); border-radius: 14px; padding: 4px 12px;
+            font-size: 0.78em; cursor: pointer; font-family: 'Rajdhani', sans-serif;
+            font-weight: 600; letter-spacing: 1px; transition: all 0.2s;
+        }
+        .logout-btn:hover { background: rgba(255,61,87,0.1); }
+
+        /* ─── KPI ─── */
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px; margin-bottom: 28px;
+        }
+        .kpi-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 22px 20px;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: kpiPop 0.5s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .kpi-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+        @keyframes kpiPop {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .kpi-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        }
+        .kpi-blue::before   { background: linear-gradient(90deg, #0088cc, #00c8ff); }
+        .kpi-green::before  { background: linear-gradient(90deg, #00875a, #00e87a); }
+        .kpi-yellow::before { background: linear-gradient(90deg, #cc7700, #ffb300); }
+        .kpi-red::before    { background: linear-gradient(90deg, #cc1133, #ff3d57); }
+        .kpi-purple::before { background: linear-gradient(90deg, #6c2db0, #b06cff); }
+        .kpi-teal::before   { background: linear-gradient(90deg, #007b7b, #00e5e5); }
+        .kpi-icon { font-size: 2em; margin-bottom: 10px; display: block; }
+        .kpi-label { font-family: 'Rajdhani', sans-serif; font-size: 0.78em; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 6px; }
+        .kpi-value { font-family: 'Share Tech Mono', monospace; font-size: 2.2em; font-weight: 700; color: var(--text-main); line-height: 1; }
+        .kpi-sub { font-size: 0.8em; color: var(--text-muted); margin-top: 6px; }
+        .kpi-trend { position: absolute; top: 16px; right: 16px; font-size: 0.8em; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+        .trend-up   { background: rgba(0,232,122,0.1); color: var(--success); }
+        .trend-down { background: rgba(255,61,87,0.1); color: var(--danger); }
+        .kpi-charts-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+
+        /* ─── BACKUP ─── */
+        .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+        @media (max-width: 768px) { .backup-grid { grid-template-columns: 1fr; } }
+        .backup-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 32px 28px; text-align: center;
+            position: relative; overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+        .backup-card:hover { box-shadow: 0 0 40px rgba(0,0,0,0.3); }
+        .backup-download { border-top: 3px solid var(--success); }
+        .backup-upload   { border-top: 3px solid var(--accent); }
+        .backup-card h3 { font-family: 'Rajdhani', sans-serif; font-size: 1.4em; font-weight: 700; color: var(--text-main); letter-spacing: 2px; margin: 16px 0 10px; }
+        .backup-card p  { color: var(--text-dim); font-size: 0.9em; line-height: 1.6; margin-bottom: 20px; }
+        .backup-icon-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; }
+        .backup-icon { font-size: 2.5em; position: relative; z-index: 2; }
+        .backup-anim-circle {
+            position: absolute; inset: 0; border-radius: 50%;
+            animation: pulseCircle 2.5s ease-in-out infinite;
+        }
+        .download-circle { background: radial-gradient(circle, rgba(0,232,122,0.15), transparent 70%); }
+        .upload-circle   { background: radial-gradient(circle, rgba(0,200,255,0.15), transparent 70%); }
+        @keyframes pulseCircle {
+            0%,100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 0.3; }
+        }
+        .backup-info { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: 'Share Tech Mono', monospace; font-size: 0.82em; color: var(--text-muted); margin-bottom: 18px; text-align: left; line-height: 1.7; }
+        .backup-btn { width: 100%; justify-content: center; }
+        .upload-drop-zone {
+            border: 2px dashed rgba(0,200,255,0.3); border-radius: 10px;
+            padding: 28px 20px; cursor: pointer; margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        .upload-drop-zone:hover, .upload-drop-zone.dragover {
+            border-color: var(--accent); background: rgba(0,200,255,0.04);
+            transform: scale(1.02);
+        }
+        .drop-icon { font-size: 2.5em; margin-bottom: 8px; }
+        .drop-text { color: var(--text-main); font-size: 0.95em; font-weight: 600; margin-bottom: 4px; }
+        .drop-subtext { color: var(--text-dim); font-size: 0.8em; }
+        .upload-progress { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+        .upload-progress-bar { height: 100%; background: linear-gradient(90deg, #0088cc, #00c8ff); border-radius: 3px; width: 0%; transition: width 0.4s; }
+        .upload-status { font-size: 0.88em; min-height: 22px; color: var(--success); font-weight: 600; }
+        .backup-history { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 26px; }
+        .backup-history h3 { font-family: 'Rajdhani', sans-serif; font-size: 1em; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 18px; }
+        .backup-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+        .backup-stat { background: var(--bg-surface); border-radius: 8px; padding: 14px 16px; }
+        .backup-stat-label { font-size: 0.75em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .backup-stat-value { font-family: 'Share Tech Mono', monospace; font-size: 1.3em; color: var(--text-main); font-weight: 700; }
+
+        /* ─── TOAST NOTIFICATION ─── */
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 99990; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            background: var(--bg-panel); border: 1px solid var(--border-glow);
+            border-radius: 10px; padding: 14px 20px; min-width: 280px; max-width: 380px;
+            display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            animation: toastIn 0.4s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .toast.hiding { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { from { opacity:0; transform: translateX(60px); } to { opacity:1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity:1; transform: translateX(0); } to { opacity:0; transform: translateX(60px); } }
+        .toast-icon { font-size: 1.4em; }
+        .toast-body { flex: 1; }
+        .toast-title { font-weight: 700; font-size: 0.92em; color: var(--text-main); }
+        .toast-msg { font-size: 0.82em; color: var(--text-muted); margin-top: 2px; }
+        .toast-success { border-left: 3px solid var(--success); }
+        .toast-error   { border-left: 3px solid var(--danger); }
+        .toast-info    { border-left: 3px solid var(--accent); }
+        .toast-warning { border-left: 3px solid var(--warning); }
+
+        /* ─── CONFERENTE BADGE ─── */
+        .conferente-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(26,86,219,0.12); border: 1px solid rgba(26,86,219,0.3);
+            border-radius: 20px; padding: 3px 10px;
+            font-size: 0.82em; font-weight: 600; color: #64a0ff;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Botões de controle de janela estilo macOS -->
     <div class="window-controls" id="windowControls">
@@ -815,6 +1043,10 @@
             <div class="header-actions">
                 <div class="live-clock" id="liveClock">--:--:--</div>
                 <span id="firebaseStatus" style="font-size:0.8em; font-weight:600; padding: 4px 10px; background: rgba(0,0,0,0.2); border-radius:6px;">🟡 Conectando Firebase...</span>
+                <div class="login-user-badge" id="userBadge">
+                    <span>👤</span><span id="userEmail" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                    <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+                </div>
                 <button class="btn btn-success" onclick="exportarDados()">⬇ Exportar CSV</button>
                 <button class="btn btn-danger" onclick="limparBancoDados()">✕ Limpar Tudo</button>
             </div>
@@ -826,6 +1058,8 @@
             <button class="tab" onclick="abrirAba('nova', this)">＋ Nova Operação</button>
             <button class="tab" onclick="abrirAba('banco', this)">▤ Banco de Dados</button>
             <button class="tab" onclick="abrirAba('relatorio', this)">◈ Relatórios</button>
+            <button class="tab" onclick="abrirAba('kpi', this)">📊 KPIs</button>
+            <button class="tab" onclick="abrirAba('backup', this)">💾 Backup</button>
         </div>
 
         <!-- CONTEÚDO: DASHBOARD -->
@@ -873,27 +1107,31 @@
 
                 <div class="form-grid">
                     <div class="form-group">
+                        <label>👷 Conferente Responsável</label>
+                        <input type="text" id="novaConferente" placeholder="Nome do conferente" required style="border-left: 3px solid var(--accent2);">
+                    </div>
+                    <div class="form-group">
                         <label>📄 Notas Fiscais</label>
                         <input type="number" id="novaNotasFiscais" min="1" placeholder="Ex: 50" required>
                     </div>
+                </div>
+
+                <div class="form-grid">
                     <div class="form-group">
                         <label>📦 Volumes</label>
                         <input type="number" id="novaVolumes" min="1" placeholder="Ex: 200" required>
                     </div>
-                </div>
-
-                <div class="form-grid">
                     <div class="form-group">
                         <label>📐 Cubagem (m³)</label>
                         <input type="number" id="novaCubagem" step="0.01" min="0.01" placeholder="Ex: 45.50" required>
                     </div>
+                </div>
+
+                <div class="form-grid">
                     <div class="form-group">
                         <label>🕐 Horário de Início</label>
                         <input type="time" id="novaHoraInicio" step="1" required>
                     </div>
-                </div>
-
-                <div class="form-grid">
                     <div class="form-group">
                         <label>🎯 Horário Meta (Fim Previsto)</label>
                         <input type="time" id="novaHoraMeta" step="1" placeholder="Ex: 22:00:00" required>
@@ -970,6 +1208,7 @@
                         <tr>
                             <th>Data</th>
                             <th>Destino</th>
+                            <th>👷 Conferente</th>
                             <th>NF</th>
                             <th>Volumes</th>
                             <th>Cubagem</th>
@@ -1058,6 +1297,126 @@
                 </table>
             </div>
         </div>
+
+        <!-- CONTEÚDO: KPI -->
+        <div id="kpi" class="tab-content">
+            <div class="section-title">📊 Painel de KPIs — Indicadores Chave</div>
+            <div id="kpiCards" class="kpi-grid"></div>
+            <div class="kpi-charts-row">
+                <div class="chart-card" style="flex:1; min-width:280px;">
+                    <h3>🏆 Ranking de Conferentes</h3>
+                    <canvas id="chartConferentes"></canvas>
+                </div>
+                <div class="chart-card" style="flex:1; min-width:280px;">
+                    <h3>⏱ Eficiência por Destino (%)</h3>
+                    <canvas id="chartEficiencia"></canvas>
+                </div>
+                <div class="chart-card" style="flex:1; min-width:280px;">
+                    <h3>📦 Volume Total por Dia</h3>
+                    <canvas id="chartVolumeDia"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO: BACKUP -->
+        <div id="backup" class="tab-content">
+            <div class="section-title">💾 Backup e Restauração de Dados</div>
+            <div class="backup-grid">
+                <div class="backup-card backup-download">
+                    <div class="backup-icon-wrap">
+                        <div class="backup-anim-circle download-circle"></div>
+                        <span class="backup-icon">⬇</span>
+                    </div>
+                    <h3>Download Backup</h3>
+                    <p>Exporte todos os dados em JSON para guardar localmente. Use em caso de perda ou migração.</p>
+                    <div class="backup-info" id="backupInfoDownload">Carregando informações...</div>
+                    <button class="btn btn-success backup-btn" onclick="baixarBackup()">
+                        <span class="btn-icon">⬇</span> Baixar Backup JSON
+                    </button>
+                    <button class="btn btn-secondary backup-btn" onclick="exportarDados()" style="margin-top:10px;">
+                        <span class="btn-icon">📄</span> Exportar CSV
+                    </button>
+                </div>
+                <div class="backup-card backup-upload">
+                    <div class="backup-icon-wrap">
+                        <div class="backup-anim-circle upload-circle"></div>
+                        <span class="backup-icon">⬆</span>
+                    </div>
+                    <h3>Restaurar Backup</h3>
+                    <p>Importe um arquivo JSON de backup para restaurar todos os dados salvos anteriormente.</p>
+                    <div class="upload-drop-zone" id="uploadDropZone" onclick="document.getElementById('uploadFileInput').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+                        <div class="drop-icon">📂</div>
+                        <div class="drop-text">Clique ou arraste o arquivo JSON aqui</div>
+                        <div class="drop-subtext">Formato: backup_farol_*.json</div>
+                    </div>
+                    <input type="file" id="uploadFileInput" accept=".json" style="display:none" onchange="carregarBackup(event)">
+                    <div id="uploadProgress" class="upload-progress" style="display:none;">
+                        <div class="upload-progress-bar" id="uploadProgressBar"></div>
+                    </div>
+                    <div id="uploadStatus" class="upload-status"></div>
+                </div>
+            </div>
+            <div class="backup-history">
+                <h3>📋 Últimas Informações do Banco</h3>
+                <div id="backupStats" class="backup-stats-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-bg-animated">
+            <div class="login-particle" style="--delay:0s;--x:10%;--y:20%">🏗️</div>
+            <div class="login-particle" style="--delay:1.5s;--x:80%;--y:60%">📦</div>
+            <div class="login-particle" style="--delay:0.8s;--x:50%;--y:80%">🚛</div>
+            <div class="login-particle" style="--delay:2s;--x:25%;--y:45%">📊</div>
+            <div class="login-particle" style="--delay:3s;--x:70%;--y:25%">⚡</div>
+        </div>
+        <div class="login-card">
+            <div class="login-logo">
+                <svg width="56" height="56" viewBox="0 0 48 48" fill="none">
+                    <rect x="2" y="28" width="28" height="14" rx="2" fill="#1c2338" stroke="#2a3352" stroke-width="1.5"/>
+                    <rect x="6" y="22" width="10" height="20" rx="1.5" fill="#00c8ff" opacity="0.8"/>
+                    <rect x="5" y="14" width="2" height="22" rx="1" fill="#00c8ff"/>
+                    <rect x="5" y="14" width="14" height="2" rx="1" fill="#00c8ff"/>
+                    <circle cx="10" cy="42" r="4" fill="#2a3352" stroke="#00c8ff" stroke-width="1.5"/>
+                    <circle cx="10" cy="42" r="1.5" fill="#00c8ff"/>
+                    <circle cx="26" cy="42" r="4" fill="#2a3352" stroke="#00c8ff" stroke-width="1.5"/>
+                    <circle cx="26" cy="42" r="1.5" fill="#00c8ff"/>
+                    <circle cx="38" cy="12" r="8" fill="#1c2338" stroke="#2a3352" stroke-width="1.5"/>
+                    <circle cx="38" cy="12" r="5" fill="#ff3d57" opacity="0.9"/>
+                    <circle cx="38" cy="12" r="2" fill="white" opacity="0.8"/>
+                    <circle cx="38" cy="12" r="8" fill="none" stroke="#ff3d57" stroke-width="1" opacity="0.4">
+                        <animate attributeName="r" values="8;14;8" dur="1.5s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="0.4;0;0.4" dur="1.5s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+            </div>
+            <h2 class="login-title">FAROL DE OPERAÇÃO</h2>
+            <p class="login-subtitle">Sistema de Monitoramento Logístico</p>
+            <div class="login-divider"></div>
+            <div class="login-form">
+                <div class="login-field">
+                    <label>📧 E-mail</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="username">
+                </div>
+                <div class="login-field">
+                    <label>🔒 Senha</label>
+                    <div style="position:relative;">
+                        <input type="password" id="loginSenha" placeholder="••••••••" autocomplete="current-password">
+                        <button type="button" class="toggle-senha" onclick="toggleSenha()" title="Mostrar/Ocultar">👁</button>
+                    </div>
+                </div>
+                <div id="loginError" class="login-error"></div>
+                <button class="btn btn-primary login-submit" id="loginBtn" onclick="fazerLogin()">
+                    <span id="loginBtnText">🔓 Entrar no Sistema</span>
+                    <div class="login-spinner" id="loginSpinner" style="display:none;"></div>
+                </button>
+            </div>
+            <div class="login-footer">
+                <span id="loginFirebaseStatus">🟡 Conectando...</span>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL DE EDIÇÃO -->
@@ -1077,6 +1436,10 @@
                     <div class="form-group">
                         <label>📍 Destino</label>
                         <input type="text" id="editDestino" required>
+                    </div>
+                    <div class="form-group">
+                        <label>👷 Conferente</label>
+                        <input type="text" id="editConferente" placeholder="Nome do conferente">
                     </div>
                     <div class="form-group">
                         <label>📄 Notas Fiscais</label>
@@ -1114,6 +1477,8 @@
 
     <script>
         let operacoes = [];
+        let currentUser = null;
+        let authModule = null;
         let proximoId = 1;
         let alertasSonoros = {};
         let charts = {};
@@ -1142,23 +1507,124 @@
             try {
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
                 const firestore = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                const auth = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
                 firestoreModule = firestore;
+                authModule = auth;
 
                 const app = initializeApp(firebaseConfig);
                 db = firestore.getFirestore(app);
+                const authInstance = auth.getAuth(app);
 
-                console.log("✅ Firebase conectado!");
-                mostrarStatusFirebase(true);
+                // Update login screen status
+                const loginStatus = document.getElementById('loginFirebaseStatus');
+                if (loginStatus) loginStatus.textContent = '🟢 Firebase conectado';
 
-                // Escutar mudanças em tempo real
-                escutarOperacoes();
+                // Listen to auth state
+                auth.onAuthStateChanged(authInstance, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        mostrarApp(user);
+                        escutarOperacoes();
+                    } else {
+                        currentUser = null;
+                        mostrarLogin();
+                    }
+                });
 
             } catch (err) {
                 console.error("❌ Erro ao conectar Firebase:", err);
                 mostrarStatusFirebase(false);
                 // Fallback para localStorage se Firebase falhar
+                mostrarApp(null);
                 carregarDadosLocal();
             }
+        }
+
+        function mostrarLogin() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('loginScreen').classList.add('visible');
+        }
+
+        function mostrarApp(user) {
+            document.querySelector('.container').style.display = '';
+            document.getElementById('loginScreen').classList.remove('visible');
+            mostrarStatusFirebase(true);
+            if (user) {
+                document.getElementById('userBadge').classList.add('visible');
+                document.getElementById('userEmail').textContent = user.email;
+            }
+        }
+
+        async function fazerLogin() {
+            if (!authModule) { showToast('Erro', 'Firebase não conectado', 'error'); return; }
+            const email = document.getElementById('loginEmail').value.trim();
+            const senha = document.getElementById('loginSenha').value;
+            const errEl = document.getElementById('loginError');
+            const btn = document.getElementById('loginBtn');
+            const spinner = document.getElementById('loginSpinner');
+            const btnText = document.getElementById('loginBtnText');
+
+            if (!email || !senha) { errEl.textContent = '⚠️ Preencha e-mail e senha.'; return; }
+
+            errEl.textContent = '';
+            btnText.textContent = 'Autenticando...';
+            spinner.style.display = 'inline-block';
+            btn.disabled = true;
+
+            try {
+                const { getAuth, signInWithEmailAndPassword } = authModule;
+                const authInst = getAuth();
+                await signInWithEmailAndPassword(authInst, email, senha);
+                showToast('Bem-vindo!', `Login realizado com sucesso`, 'success');
+            } catch (err) {
+                const msgs = {
+                    'auth/user-not-found': 'Usuário não encontrado.',
+                    'auth/wrong-password': 'Senha incorreta.',
+                    'auth/invalid-email': 'E-mail inválido.',
+                    'auth/too-many-requests': 'Muitas tentativas. Tente mais tarde.',
+                    'auth/invalid-credential': 'Credenciais inválidas.'
+                };
+                errEl.textContent = '❌ ' + (msgs[err.code] || err.message);
+                document.getElementById('loginCard')?.classList.add('shake');
+            } finally {
+                btnText.textContent = '🔓 Entrar no Sistema';
+                spinner.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+
+        async function fazerLogout() {
+            if (!authModule) return;
+            const { getAuth, signOut } = authModule;
+            await signOut(getAuth());
+            document.getElementById('userBadge').classList.remove('visible');
+            showToast('Até logo!', 'Sessão encerrada com sucesso', 'info');
+        }
+
+        function toggleSenha() {
+            const input = document.getElementById('loginSenha');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Allow Enter key on login
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('visible')) {
+                fazerLogin();
+            }
+        });
+
+        // ─── TOAST SYSTEM ───
+        function showToast(title, msg, type = 'info') {
+            const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `<div class="toast-icon">${icons[type]}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 350);
+            }, 3500);
         }
 
         function mostrarStatusFirebase(conectado) {
@@ -1280,6 +1746,10 @@
 
             inicializarGraficos();
 
+            // Mostrar tela de login enquanto Firebase inicializa
+            document.getElementById('loginScreen').classList.add('visible');
+            document.querySelector('.container').style.display = 'none';
+
             // Inicializa Firebase (se configurado), senão usa localStorage
             await initFirebase();
 
@@ -1292,6 +1762,8 @@
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(aba).classList.add('active');
             if (btn) btn.classList.add('active');
+            if (aba === 'kpi') setTimeout(atualizarKPI, 50);
+            if (aba === 'backup') setTimeout(() => { atualizarInfoBackup(); atualizarBackupStats(); }, 50);
         }
 
         // ADICIONAR NOVA OPERAÇÃO
@@ -1318,6 +1790,7 @@
                 id: proximoId++,
                 data: dataStr,
                 destino: document.getElementById('novaDestino').value,
+                conferente: document.getElementById('novaConferente').value,
                 notasFiscais: parseInt(document.getElementById('novaNotasFiscais').value),
                 volumes: parseInt(document.getElementById('novaVolumes').value),
                 cubagem: parseFloat(document.getElementById('novaCubagem').value),
@@ -1342,10 +1815,7 @@
                 atualizarGraficos();
             }
 
-            alert('✅ Operação cadastrada com sucesso!\n' +
-                  'Destino: ' + novaOp.destino + '\n' +
-                  'Horário de início: ' + novaOp.inicio + '\n' +
-                  'Meta: ' + novaOp.meta + ' minutos');
+            showToast('✔ Operação cadastrada!', `Destino: ${novaOp.destino} | Conferente: ${novaOp.conferente} | Meta: ${novaOp.meta}min`, 'success');
             
             limparFormulario();
         }
@@ -1548,6 +2018,7 @@
                     <tr>
                         <td>${formatarDataBR(op.data)}</td>
                         <td><strong>${op.destino}</strong></td>
+                        <td>${op.conferente ? `<span class="conferente-badge">👷 ${op.conferente}</span>` : '-'}</td>
                         <td>${op.notasFiscais}</td>
                         <td>${op.volumes}</td>
                         <td>${op.cubagem}</td>
@@ -1569,7 +2040,7 @@
             if (html === '') {
                 html = `
                     <tr>
-                        <td colspan="11" style="text-align: center; padding: 40px; color: #6c757d; font-size: 1.3em;">
+                        <td colspan="12" style="text-align: center; padding: 40px; color: #6c757d; font-size: 1.3em;">
                             📭 Nenhuma operação cadastrada
                         </td>
                     </tr>
@@ -1603,6 +2074,7 @@
                     <tr>
                         <td>${formatarDataBR(op.data)}</td>
                         <td><strong>${op.destino}</strong></td>
+                        <td>${op.conferente ? `<span class="conferente-badge">👷 ${op.conferente}</span>` : '-'}</td>
                         <td>${op.notasFiscais}</td>
                         <td>${op.volumes}</td>
                         <td>${op.cubagem}</td>
@@ -1624,7 +2096,7 @@
             if (html === '') {
                 html = `
                     <tr>
-                        <td colspan="11" style="text-align: center; padding: 40px; color: #6c757d; font-size: 1.3em;">
+                        <td colspan="12" style="text-align: center; padding: 40px; color: #6c757d; font-size: 1.3em;">
                             📭 Nenhuma operação encontrada com os filtros aplicados
                         </td>
                     </tr>
@@ -1880,6 +2352,7 @@
             document.getElementById('editId').value = op.id;
             document.getElementById('editData').value = op.data;
             document.getElementById('editDestino').value = op.destino;
+            document.getElementById('editConferente').value = op.conferente || '';
             document.getElementById('editNotasFiscais').value = op.notasFiscais;
             document.getElementById('editVolumes').value = op.volumes;
             document.getElementById('editCubagem').value = op.cubagem;
@@ -1901,6 +2374,7 @@
 
             op.data = document.getElementById('editData').value;
             op.destino = document.getElementById('editDestino').value;
+            op.conferente = document.getElementById('editConferente').value || op.conferente || '';
             op.notasFiscais = parseInt(document.getElementById('editNotasFiscais').value);
             op.volumes = parseInt(document.getElementById('editVolumes').value);
             op.cubagem = parseFloat(document.getElementById('editCubagem').value);
@@ -1960,12 +2434,12 @@
             
             if (fimCarregamento && op.status !== 'em-andamento') {
                 const tempoTotal = calcularTempoTotal(op.inicioTimestamp, op.fimTimestamp);
-                const statusMsg = op.status === 'finalizado' ? '✅ Dentro da meta!' : 
-                                 op.status === 'alerta' ? '⚠️ Em alerta!' : 
-                                 '❌ Fora da meta!';
-                alert(`✅ Operação atualizada e finalizada!\n${statusMsg}\nTempo total: ${tempoTotal}`);
+                const statusMsg = op.status === 'finalizado' ? 'Dentro da meta!' : 
+                                 op.status === 'alerta' ? 'Em alerta!' : 
+                                 'Fora da meta!';
+                showToast('Operação finalizada', `${statusMsg} Tempo: ${tempoTotal}`, op.status === 'finalizado' ? 'success' : op.status === 'alerta' ? 'warning' : 'error');
             } else {
-                alert('✅ Operação atualizada!');
+                showToast('Operação atualizada', 'Dados salvos com sucesso', 'success');
             }
         }
 
@@ -1986,7 +2460,7 @@
                     atualizarGraficos();
                     carregarRelatorioTempos();
                 }
-                alert('✅ Operação excluída!');
+                showToast('Excluído', 'Operação removida com sucesso', 'info');
             }
         }
 
@@ -2009,7 +2483,7 @@
                         atualizarGraficos();
                         carregarRelatorioTempos();
                     }
-                    alert('✅ Banco de dados limpo!');
+                    showToast('Banco limpo', 'Todos os dados foram removidos', 'warning');
                 }
             }
         }
@@ -2034,7 +2508,7 @@
             link.download = `operacoes_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
 
-            alert('✅ Dados exportados com sucesso!');
+            showToast('Exportado!', 'Arquivo CSV gerado com sucesso', 'success');
         }
 
         // LIMPAR FORMULÁRIO
@@ -2104,6 +2578,273 @@
                 fecharModal();
             }
         }
+
+        // ═══════════════════════════════════════════
+        // KPI DASHBOARD
+        // ═══════════════════════════════════════════
+        let chartsKpi = {};
+
+        function atualizarKPI() {
+            const total = operacoes.length;
+            const emAndamento = operacoes.filter(o => o.status === 'em-andamento').length;
+            const finalizadas = operacoes.filter(o => o.status === 'finalizado').length;
+            const alerta = operacoes.filter(o => o.status === 'alerta').length;
+            const foraMeta = operacoes.filter(o => o.status === 'fora-meta').length;
+            const totalVolumes = operacoes.reduce((s, o) => s + (o.volumes || 0), 0);
+            const totalCubagem = operacoes.reduce((s, o) => s + (o.cubagem || 0), 0).toFixed(1);
+            const totalNFs = operacoes.reduce((s, o) => s + (o.notasFiscais || 0), 0);
+            const concluidas = finalizadas + alerta + foraMeta;
+            const taxaSucesso = concluidas > 0 ? ((finalizadas / concluidas) * 100).toFixed(1) : '0.0';
+
+            // Tempo médio das concluídas
+            const comTempo = operacoes.filter(o => o.fimTimestamp && o.inicioTimestamp);
+            const tempoMedioMin = comTempo.length > 0
+                ? (comTempo.reduce((s, o) => s + (o.fimTimestamp - o.inicioTimestamp) / 60000, 0) / comTempo.length).toFixed(0)
+                : 0;
+
+            const kpiDefs = [
+                { icon: '📋', label: 'Total de Operações', value: total, sub: 'Todas as cargas', color: 'kpi-blue' },
+                { icon: '🔵', label: 'Em Andamento', value: emAndamento, sub: 'Operações ativas', color: 'kpi-blue', trend: emAndamento > 0 ? { label: 'ativo', up: true } : null },
+                { icon: '✅', label: 'Dentro da Meta', value: finalizadas, sub: 'Concluídas no prazo', color: 'kpi-green' },
+                { icon: '⚠️', label: 'Em Alerta', value: alerta, sub: 'Acima de 80% da meta', color: 'kpi-yellow' },
+                { icon: '🔴', label: 'Fora da Meta', value: foraMeta, sub: 'Prazo excedido', color: 'kpi-red' },
+                { icon: '🏆', label: 'Taxa de Sucesso', value: taxaSucesso + '%', sub: 'Das operações concluídas', color: parseFloat(taxaSucesso) >= 80 ? 'kpi-green' : 'kpi-yellow' },
+                { icon: '📦', label: 'Total de Volumes', value: totalVolumes.toLocaleString('pt-BR'), sub: 'Volumes movimentados', color: 'kpi-teal' },
+                { icon: '📐', label: 'Cubagem Total', value: totalCubagem + ' m³', sub: 'Volume cúbico total', color: 'kpi-purple' },
+                { icon: '📄', label: 'Notas Fiscais', value: totalNFs.toLocaleString('pt-BR'), sub: 'NFs processadas', color: 'kpi-blue' },
+                { icon: '⏱', label: 'Tempo Médio', value: tempoMedioMin + ' min', sub: 'Por operação concluída', color: 'kpi-teal' },
+            ];
+
+            document.getElementById('kpiCards').innerHTML = kpiDefs.map((k, i) => `
+                <div class="kpi-card ${k.color}" style="animation-delay:${i * 0.06}s">
+                    ${k.trend ? `<span class="kpi-trend ${k.trend.up ? 'trend-up' : 'trend-down'}">${k.trend.up ? '▲' : '▼'} ${k.trend.label}</span>` : ''}
+                    <span class="kpi-icon">${k.icon}</span>
+                    <div class="kpi-label">${k.label}</div>
+                    <div class="kpi-value">${k.value}</div>
+                    <div class="kpi-sub">${k.sub}</div>
+                </div>
+            `).join('');
+
+            atualizarGraficosKPI();
+        }
+
+        function atualizarGraficosKPI() {
+            // Gráfico: Ranking de Conferentes
+            const porConferente = {};
+            operacoes.forEach(op => {
+                const nome = op.conferente || 'Não informado';
+                if (!porConferente[nome]) porConferente[nome] = { total: 0, ok: 0 };
+                porConferente[nome].total++;
+                if (op.status === 'finalizado') porConferente[nome].ok++;
+            });
+            const confLabels = Object.keys(porConferente).slice(0, 8);
+            const confData = confLabels.map(k => porConferente[k].total);
+            const confColors = confLabels.map((_, i) => `hsl(${200 + i * 25}, 70%, 55%)`);
+
+            if (chartsKpi.conferentes) {
+                chartsKpi.conferentes.data.labels = confLabels;
+                chartsKpi.conferentes.data.datasets[0].data = confData;
+                chartsKpi.conferentes.data.datasets[0].backgroundColor = confColors;
+                chartsKpi.conferentes.update();
+            } else {
+                const ctx1 = document.getElementById('chartConferentes');
+                if (ctx1) chartsKpi.conferentes = new Chart(ctx1, {
+                    type: 'bar',
+                    data: { labels: confLabels, datasets: [{ label: 'Operações', data: confData, backgroundColor: confColors, borderRadius: 6, borderSkipped: false }] },
+                    options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#1c2338' }, ticks: { color: '#7a8aaa' } }, y: { grid: { color: '#1c2338' }, ticks: { color: '#ccd6f6' } } } }
+                });
+            }
+
+            // Gráfico: Eficiência por Destino
+            const porDestEfic = {};
+            operacoes.filter(o => o.status !== 'em-andamento').forEach(op => {
+                if (!porDestEfic[op.destino]) porDestEfic[op.destino] = { total: 0, ok: 0 };
+                porDestEfic[op.destino].total++;
+                if (op.status === 'finalizado') porDestEfic[op.destino].ok++;
+            });
+            const eficLabels = Object.keys(porDestEfic).slice(0, 6);
+            const eficData = eficLabels.map(k => parseFloat(((porDestEfic[k].ok / porDestEfic[k].total) * 100).toFixed(1)));
+            const eficColors = eficData.map(v => v >= 80 ? '#00e87a' : v >= 60 ? '#ffb300' : '#ff3d57');
+
+            if (chartsKpi.eficiencia) {
+                chartsKpi.eficiencia.data.labels = eficLabels;
+                chartsKpi.eficiencia.data.datasets[0].data = eficData;
+                chartsKpi.eficiencia.data.datasets[0].backgroundColor = eficColors;
+                chartsKpi.eficiencia.update();
+            } else {
+                const ctx2 = document.getElementById('chartEficiencia');
+                if (ctx2) chartsKpi.eficiencia = new Chart(ctx2, {
+                    type: 'bar',
+                    data: { labels: eficLabels, datasets: [{ label: 'Eficiência %', data: eficData, backgroundColor: eficColors, borderRadius: 6 }] },
+                    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#1c2338' }, ticks: { color: '#7a8aaa', callback: v => v + '%' } }, x: { grid: { color: '#1c2338' }, ticks: { color: '#ccd6f6' } } } }
+                });
+            }
+
+            // Gráfico: Volume por Dia
+            const volPorDia = {};
+            operacoes.forEach(op => {
+                const d = formatarDataBR(op.data);
+                volPorDia[d] = (volPorDia[d] || 0) + (op.volumes || 0);
+            });
+            const diasVol = Object.keys(volPorDia).sort((a, b) => {
+                const [da, ma, ya] = a.split('/'); const [db, mb, yb] = b.split('/');
+                return new Date(ya, ma-1, da) - new Date(yb, mb-1, db);
+            }).slice(-7);
+
+            if (chartsKpi.volumeDia) {
+                chartsKpi.volumeDia.data.labels = diasVol;
+                chartsKpi.volumeDia.data.datasets[0].data = diasVol.map(d => volPorDia[d]);
+                chartsKpi.volumeDia.update();
+            } else {
+                const ctx3 = document.getElementById('chartVolumeDia');
+                if (ctx3) chartsKpi.volumeDia = new Chart(ctx3, {
+                    type: 'line',
+                    data: { labels: diasVol, datasets: [{ label: 'Volumes', data: diasVol.map(d => volPorDia[d]), borderColor: '#00c8ff', backgroundColor: 'rgba(0,200,255,0.08)', fill: true, tension: 0.4, pointBackgroundColor: '#00c8ff', pointRadius: 5 }] },
+                    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#1c2338' }, ticks: { color: '#7a8aaa' } }, x: { grid: { color: '#1c2338' }, ticks: { color: '#ccd6f6' } } } }
+                });
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // BACKUP / RESTORE
+        // ═══════════════════════════════════════════
+        function baixarBackup() {
+            const backup = {
+                versao: '2.0',
+                exportadoEm: new Date().toISOString(),
+                totalOperacoes: operacoes.length,
+                operacoes: operacoes.map(({ _docId, ...rest }) => rest)
+            };
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `backup_farol_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            showToast('Backup salvo!', `${operacoes.length} operações exportadas`, 'success');
+            atualizarInfoBackup();
+        }
+
+        function atualizarInfoBackup() {
+            const el = document.getElementById('backupInfoDownload');
+            if (!el) return;
+            const total = operacoes.length;
+            const hoje = new Date().toLocaleDateString('pt-BR');
+            const hora = new Date().toLocaleTimeString('pt-BR');
+            el.innerHTML = `📦 <b>${total}</b> operações disponíveis<br>🕐 Última atualização: ${hoje} ${hora}<br>💾 Formato: JSON estruturado`;
+            atualizarBackupStats();
+        }
+
+        function atualizarBackupStats() {
+            const el = document.getElementById('backupStats');
+            if (!el) return;
+            const total = operacoes.length;
+            const volumes = operacoes.reduce((s, o) => s + (o.volumes || 0), 0);
+            const destinos = new Set(operacoes.map(o => o.destino)).size;
+            const conferentes = new Set(operacoes.map(o => o.conferente).filter(Boolean)).size;
+            const finalizadas = operacoes.filter(o => o.status !== 'em-andamento').length;
+            const stats = [
+                { label: 'Total de Operações', value: total },
+                { label: 'Operações Concluídas', value: finalizadas },
+                { label: 'Total de Volumes', value: volumes.toLocaleString('pt-BR') },
+                { label: 'Destinos Únicos', value: destinos },
+                { label: 'Conferentes', value: conferentes },
+                { label: 'Última Exportação', value: new Date().toLocaleDateString('pt-BR') },
+            ];
+            el.innerHTML = stats.map(s => `
+                <div class="backup-stat">
+                    <div class="backup-stat-label">${s.label}</div>
+                    <div class="backup-stat-value">${s.value}</div>
+                </div>
+            `).join('');
+        }
+
+        function carregarBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            processarArquivoBackup(file);
+        }
+
+        function dragOver(e) { e.preventDefault(); document.getElementById('uploadDropZone').classList.add('dragover'); }
+        function dragLeave(e) { document.getElementById('uploadDropZone').classList.remove('dragover'); }
+        function dropFile(e) {
+            e.preventDefault();
+            document.getElementById('uploadDropZone').classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) processarArquivoBackup(file);
+        }
+
+        async function processarArquivoBackup(file) {
+            const statusEl = document.getElementById('uploadStatus');
+            const progressEl = document.getElementById('uploadProgress');
+            const barEl = document.getElementById('uploadProgressBar');
+
+            if (!file.name.endsWith('.json')) {
+                statusEl.textContent = '❌ Por favor selecione um arquivo .json';
+                statusEl.style.color = 'var(--danger)';
+                return;
+            }
+
+            progressEl.style.display = 'block';
+            statusEl.textContent = '⏳ Lendo arquivo...';
+            statusEl.style.color = 'var(--text-muted)';
+            barEl.style.width = '20%';
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    barEl.style.width = '50%';
+                    const dados = JSON.parse(e.target.result);
+                    const lista = dados.operacoes || dados;
+
+                    if (!Array.isArray(lista)) throw new Error('Formato inválido');
+
+                    barEl.style.width = '75%';
+                    statusEl.textContent = `📤 Importando ${lista.length} operações...`;
+
+                    if (!confirm(`⚠️ Isso irá substituir os dados atuais com ${lista.length} operações do backup.\nDeseja continuar?`)) {
+                        progressEl.style.display = 'none';
+                        statusEl.textContent = 'Importação cancelada.';
+                        barEl.style.width = '0%';
+                        return;
+                    }
+
+                    if (db && firestoreModule) {
+                        // Limpar Firebase e reimportar
+                        await limparFirebase();
+                        const { collection, addDoc } = firestoreModule;
+                        for (const op of lista) {
+                            const { _docId, ...dadosLimpos } = op;
+                            await addDoc(collection(db, 'operacoes'), dadosLimpos);
+                        }
+                    } else {
+                        operacoes = lista;
+                        proximoId = lista.length > 0 ? Math.max(...lista.map(o => o.id)) + 1 : 1;
+                        salvarDados();
+                        atualizarDashboard();
+                        carregarOperacoes();
+                        aplicarFiltros();
+                        aplicarFiltrosBanco();
+                        atualizarGraficos();
+                    }
+
+                    barEl.style.width = '100%';
+                    statusEl.textContent = `✅ ${lista.length} operações importadas com sucesso!`;
+                    statusEl.style.color = 'var(--success)';
+                    showToast('Backup restaurado!', `${lista.length} operações importadas`, 'success');
+                    setTimeout(() => { progressEl.style.display = 'none'; barEl.style.width = '0%'; }, 2000);
+                    atualizarInfoBackup();
+                } catch (err) {
+                    barEl.style.width = '100%';
+                    statusEl.textContent = '❌ Erro ao ler arquivo: ' + err.message;
+                    statusEl.style.color = 'var(--danger)';
+                    showToast('Erro no backup', err.message, 'error');
+                    setTimeout(() => { progressEl.style.display = 'none'; barEl.style.width = '0%'; }, 3000);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Hook into escutarOperacoes to also refresh KPI
     </script>
 </body>
 </html>
